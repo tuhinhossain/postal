@@ -39,6 +39,54 @@ module LegacyAPI
       render_success domain_data(domain)
     end
 
+    # Run DNS checks for a domain and return the results.
+    #
+    #   URL:        /api/v1/domains/check
+    #
+    #   Parameters: id  => REQ: The integer ID of the domain to check
+    #
+    #   Response:   id                  - integer domain ID
+    #               spf_status          - "OK", "Missing", or "Invalid"
+    #               spf_error           - error message or null
+    #               dkim_status         - "OK", "Missing", or "Invalid"
+    #               dkim_error          - error message or null
+    #               mx_status           - "OK", "Missing", or "Invalid"
+    #               mx_error            - error message or null
+    #               return_path_status  - "OK", "Missing", or "Invalid"
+    #               return_path_error   - error message or null
+    #               dns_ok              - true if SPF + DKIM pass (MX/return-path optional)
+    #
+    def check
+      id = api_params["id"].to_s.strip
+
+      if id.blank?
+        render_parameter_error "`id` parameter is required but is missing"
+        return
+      end
+
+      domain = @current_credential.server.domains.find_by(id: id)
+
+      if domain.nil?
+        render_error "DomainNotFound", message: "No domain with id #{id} found on this server."
+        return
+      end
+
+      domain.check_dns(:manual)
+
+      render_success(
+        id:                 domain.id,
+        spf_status:         domain.spf_status,
+        spf_error:          domain.spf_error,
+        dkim_status:        domain.dkim_status,
+        dkim_error:         domain.dkim_error,
+        mx_status:          domain.mx_status,
+        mx_error:           domain.mx_error,
+        return_path_status: domain.return_path_status,
+        return_path_error:  domain.return_path_error,
+        dns_ok:             domain.dns_ok?
+      )
+    end
+
     # Delete a domain from the current server.
     #
     #   URL:        /api/v1/domains/delete

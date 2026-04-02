@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   match "/api/v1/messages/message" => "legacy_api/messages#message", via: [:get, :post, :patch, :put]
   match "/api/v1/messages/deliveries" => "legacy_api/messages#deliveries", via: [:get, :post, :patch, :put]
   post "/api/v1/domains/create" => "legacy_api/domains#create"
+  post "/api/v1/domains/check"  => "legacy_api/domains#check"
   post "/api/v1/domains/delete" => "legacy_api/domains#delete"
 
   scope "org/:org_permalink", as: "organization" do
