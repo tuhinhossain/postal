@@ -28,7 +28,8 @@ module LegacyAPI
 
       domain = @current_credential.server.domains.new(
         name: name,
-        verification_method: "DNS"
+        verification_method: "DNS",
+        verified_at: Time.now
       )
 
       unless domain.save
