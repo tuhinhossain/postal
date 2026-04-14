@@ -320,6 +320,11 @@ module Postal
         default "spf.postal.example.com"
       end
 
+      string :spf_record do
+        description "A custom SPF record to use instead of the auto-generated one (e.g. 'v=spf1 include:spf.postal.example.com ~all'). When set, this overrides the default record that includes 'a mx'."
+        default nil
+      end
+
       string :return_path_domain do
         description "The return path hostname"
         default "rp.postal.example.com"

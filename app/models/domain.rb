@@ -104,7 +104,7 @@ class Domain < ApplicationRecord
   end
 
   def spf_record
-    "v=spf1 a mx include:#{Postal::Config.dns.spf_include} ~all"
+    Postal::Config.dns.spf_record.presence || "v=spf1 a mx include:#{Postal::Config.dns.spf_include} ~all"
   end
 
   def dkim_record

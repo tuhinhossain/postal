@@ -133,6 +133,9 @@ dns:
     - mx2.postal.example.com
   # The location of the SPF record
   spf_include: spf.postal.example.com
+  # A custom SPF record to use instead of the auto-generated one.
+  # When set, overrides the default record that includes 'a mx'.
+  # spf_record: "v=spf1 include:spf.postal.example.com ~all"
   # The return path hostname
   return_path_domain: rp.postal.example.com
   # The domain to use for hosting route-specific addresses

@@ -215,8 +215,16 @@ describe Domain do
   end
 
   describe "#spf_record" do
-    it "returns the SPF record" do
+    it "returns the auto-generated SPF record when no custom record is configured" do
       expect(domain.spf_record).to eq "v=spf1 a mx include:#{Postal::Config.dns.spf_include} ~all"
+    end
+
+    context "when dns.spf_record is configured" do
+      before { allow(Postal::Config.dns).to receive(:spf_record).and_return("v=spf1 include:spf.postal.example.com ~all") }
+
+      it "returns the custom SPF record" do
+        expect(domain.spf_record).to eq "v=spf1 include:spf.postal.example.com ~all"
+      end
     end
   end
 
