@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   post "/api/v1/domains/create" => "legacy_api/domains#create"
   post "/api/v1/domains/check"  => "legacy_api/domains#check"
   post "/api/v1/domains/delete" => "legacy_api/domains#delete"
+  post "/api/v1/tracking_domains/create" => "legacy_api/tracking_domains#create"
+  post "/api/v1/tracking_domains/check"  => "legacy_api/tracking_domains#check"
+  post "/api/v1/tracking_domains/delete" => "legacy_api/tracking_domains#delete"
 
   scope "org/:org_permalink", as: "organization" do
     resources :domains, only: [:index, :new, :create, :destroy] do
