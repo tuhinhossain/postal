@@ -474,10 +474,15 @@ module Postal
       #
       def create_load(request)
         sent_delivery = database.select("deliveries", where: { message_id: id, status: "Sent" }, order: :timestamp, direction: "DESC", limit: 1).first
-        return if sent_delivery && (Time.now.to_f - sent_delivery["timestamp"].to_f) < 30
+        now = Time.now.to_f
+        diff = sent_delivery ? (now - sent_delivery["timestamp"].to_f) : nil
 
-        update("loaded" => Time.now.to_f) if loaded.nil?
-        database.insert(:loads, { message_id: id, ip_address: request.ip, user_agent: request.user_agent, timestamp: Time.now.to_f })
+        Rails.logger.info "[MessageLoaded] message_id=#{id} now=#{now} sent_at=#{sent_delivery&.dig("timestamp")} diff=#{diff&.round(2)}s skipped=#{diff && diff < 30}"
+
+        return if diff && diff < 30
+
+        update("loaded" => now) if loaded.nil?
+        database.insert(:loads, { message_id: id, ip_address: request.ip, user_agent: request.user_agent, timestamp: now })
 
         WebhookRequest.trigger(server, "MessageLoaded", {
           message: webhook_hash,
