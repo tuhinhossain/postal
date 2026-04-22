@@ -477,7 +477,7 @@ module Postal
         now = Time.now.to_f
         diff = sent_delivery ? (now - sent_delivery["timestamp"].to_f) : nil
 
-        Rails.logger.info "[MessageLoaded] message_id=#{id} now=#{now} sent_at=#{sent_delivery&.dig("timestamp")} diff=#{diff&.round(2)}s skipped=#{diff && diff < 30}"
+        Postal.logger.info "[MessageLoaded] message_id=#{id} now=#{now} sent_at=#{sent_delivery&.dig("timestamp")} diff=#{diff&.round(2)}s skipped=#{diff && diff < 30}"
 
         return if diff && diff < 30
 
