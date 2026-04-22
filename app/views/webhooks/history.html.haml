@@ -21,7 +21,7 @@
     %ul.webhookRequestList
       - for req in @requests[:records]
         %li.webhookRequestList__item
-          = link_to history_request_organization_server_webhooks_path(organization, @server, req.uuid), :class => 'webhookRequestList__link' do
+          = link_to history_request_organization_server_webhooks_path(organization, @server, req.id), :class => 'webhookRequestList__link' do
             .webhookRequestList__top
               %p.webhookRequestList__status
                 %span.label{:class => "label--http-status-#{req.status_code.to_s[0,1]}"}= req.status_code

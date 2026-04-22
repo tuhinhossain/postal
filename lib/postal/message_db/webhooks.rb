@@ -19,7 +19,12 @@ module Postal
       end
 
       def find(uuid)
-        request = @database.select(:webhook_requests, where: { uuid: uuid }).first || raise(RequestNotFound, "No request found with UUID '#{uuid}'")
+        request = @database.select(:webhook_requests, where: { uuid: uuid }, order: :id, direction: "desc").first || raise(RequestNotFound, "No request found with UUID '#{uuid}'")
+        Request.new(request)
+      end
+
+      def find_by_id(id)
+        request = @database.select(:webhook_requests, where: { id: id.to_i }).first || raise(RequestNotFound, "No request found with ID '#{id}'")
         Request.new(request)
       end
 
@@ -56,6 +61,10 @@ module Postal
 
         def url
           @attributes["url"]
+        end
+
+        def id
+          @attributes["id"]
         end
 
         def uuid

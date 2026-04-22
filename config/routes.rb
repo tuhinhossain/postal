@@ -56,7 +56,7 @@ Rails.application.routes.draw do
       end
       resources :webhooks do
         get :history, on: :collection
-        get "history/:uuid", on: :collection, action: "history_request", as: "history_request"
+        get "history/:id", on: :collection, action: "history_request", as: "history_request"
       end
       get :limits, on: :member
       get :retention, on: :member
