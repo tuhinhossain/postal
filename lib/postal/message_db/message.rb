@@ -473,6 +473,9 @@ module Postal
       # Add a load for this message
       #
       def create_load(request)
+        sent_delivery = database.select("deliveries", where: { message_id: id, status: "Sent" }, order: :timestamp, direction: "DESC", limit: 1).first
+        return if sent_delivery && (Time.now.to_f - sent_delivery["timestamp"].to_f) < 30
+
         update("loaded" => Time.now.to_f) if loaded.nil?
         database.insert(:loads, { message_id: id, ip_address: request.ip, user_agent: request.user_agent, timestamp: Time.now.to_f })
 
