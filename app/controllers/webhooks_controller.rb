@@ -4,7 +4,7 @@ class WebhooksController < ApplicationController
 
   include WithinOrganization
   before_action { @server = organization.servers.present.find_by_permalink!(params[:server_id]) }
-  before_action { params[:id] && @webhook = @server.webhooks.find_by_uuid!(params[:id]) }
+  before_action(only: %i[show edit update destroy]) { @webhook = @server.webhooks.find_by_uuid!(params[:id]) }
 
   def index
     @webhooks = @server.webhooks.order(:url).to_a
