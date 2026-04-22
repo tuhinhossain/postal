@@ -45,6 +45,15 @@ class WebhooksController < ApplicationController
     @req = @server.message_db.webhooks.find_by_id(params[:id])
   end
 
+  def resend_request
+    req = @server.message_db.webhooks.find_by_id(params[:id])
+    payload = JSON.parse(req.payload)
+    webhook = @server.webhooks.find_by(id: req["webhook_id"])
+    @server.webhook_requests.create!(event: req.event, payload: payload, webhook: webhook, url: req.url, attempts: req.attempt.to_i)
+    redirect_to history_organization_server_webhooks_path(organization, @server),
+                notice: "This webhook request will be resent shortly."
+  end
+
   private
 
   def safe_params

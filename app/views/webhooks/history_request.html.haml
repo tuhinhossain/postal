@@ -31,4 +31,7 @@
   %pre.codeBlock.u-margin.codeBlock--whitespace~ preserve @req.pretty_payload
   %p.pageContent__title Response Body
   %pre.codeBlock.u-margin= @req.body
-  %p.u-margin= link_to "Back to history", [:history, organization, @server, :webhooks], :class => "button button--neutral"
+  %p.u-margin
+    = link_to "Resend", resend_request_organization_server_webhooks_path(organization, @server, @req.id), :class => "button button--small", :method => :post, :data => { :confirm => "Are you sure you want to resend this webhook request?" }
+    &nbsp;
+    = link_to "Back to history", [:history, organization, @server, :webhooks], :class => "button button--neutral"
