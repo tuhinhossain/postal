@@ -189,6 +189,10 @@ module Postal
         end
       end
 
+      def logger
+        @logger ||= Postal.logger.create_tagged_logger(log_id: @log_id)
+      end
+
       def respond_to_missing?(name, include_private = false)
         name = name.to_s.sub(/=\z/, "")
         @attributes.key?(name.to_s)
@@ -477,7 +481,7 @@ module Postal
         now = Time.now.to_f
         diff = sent_delivery ? (now - sent_delivery["timestamp"].to_f) : nil
 
-        Postal.logger.info "[MessageLoaded] message_id=#{id} now=#{now} sent_at=#{sent_delivery&.dig("timestamp")} diff=#{diff&.round(2)}s skipped=#{diff && diff < 30}"
+        logger.info "[MessageLoaded] message_id=#{id} now=#{now} sent_at=#{sent_delivery&.dig("timestamp")} diff=#{diff&.round(2)}s skipped=#{diff && diff < 30}"
 
         return if diff && diff < 30
 

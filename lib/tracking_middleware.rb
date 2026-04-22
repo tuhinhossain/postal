@@ -37,15 +37,15 @@ class TrackingMiddleware
       return [404, {}, ["Invalid Server Token"]]
     end
 
-    Postal.logger.info "[TrackingMiddleware] dispatch_image_request server_token=#{server_token} message_token=#{message_token}"
+    logger.info "[TrackingMiddleware] dispatch_image_request server_token=#{server_token} message_token=#{message_token}"
 
     begin
       message = message_db.message(token: message_token)
       message.create_load(request)
     rescue Postal::MessageDB::Message::NotFound
-      Postal.logger.info "[TrackingMiddleware] message not found token=#{message_token}"
+      logger.info "[TrackingMiddleware] message not found token=#{message_token}"
     rescue StandardError => e
-      Postal.logger.error "[TrackingMiddleware] create_load error: #{e.class} #{e.message}"
+      logger.error "[TrackingMiddleware] create_load error: #{e.class} #{e.message}"
       Sentry.capture_exception(e) if defined?(Sentry)
     end
 
@@ -117,6 +117,10 @@ class TrackingMiddleware
     return unless server = ::Server.find_by_token(token)
 
     server.message_db
+  end
+
+  def logger
+    Postal.logger
   end
 
 end
