@@ -37,15 +37,14 @@ class TrackingMiddleware
       return [404, {}, ["Invalid Server Token"]]
     end
 
-    logger.info "[TrackingMiddleware] dispatch_image_request server_token=#{server_token} message_token=#{message_token}"
-
     begin
       message = message_db.message(token: message_token)
       message.create_load(request)
     rescue Postal::MessageDB::Message::NotFound
-      logger.info "[TrackingMiddleware] message not found token=#{message_token}"
+      # This message has been removed, we'll just continue to serve the image
     rescue StandardError => e
-      logger.error "[TrackingMiddleware] create_load error: #{e.class} #{e.message}"
+      # Somethign else went wrong. We don't want to stop the image loading though because
+      # this is our problem. Log this exception though.
       Sentry.capture_exception(e) if defined?(Sentry)
     end
 
@@ -117,10 +116,6 @@ class TrackingMiddleware
     return unless server = ::Server.find_by_token(token)
 
     server.message_db
-  end
-
-  def logger
-    Postal.logger
   end
 
 end
